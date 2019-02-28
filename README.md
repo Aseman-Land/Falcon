@@ -1,2 +1,2 @@
 # Falcon
-Aseman's Falcon Client
+Aseman's Server (Falcon) Client Qt modules

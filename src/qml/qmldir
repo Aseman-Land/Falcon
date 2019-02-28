@@ -1,0 +1,4 @@
+module Falcon
+classname AsemanClientQmlPlugin
+typeinfo plugins.qmltypes
+plugin declarative_falconqml
