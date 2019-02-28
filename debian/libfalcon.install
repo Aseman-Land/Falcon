@@ -1,0 +1,4 @@
+usr/lib/*-linux-gnu/libAsemanFalcon*
+usr/lib/*-linux-gnu/cmake/Qt5AsemanFalcon/*
+usr/lib/*-linux-gnu/pkgconfig/AsemanFalcon.pc
+usr/lib/*-linux-gnu/qt5/mkspecs/modules/qt_lib_falcon*

@@ -1,0 +1,41 @@
+Source: falcon
+Section: libs
+Priority: optional
+Maintainer: Aseman Team <contact@aseman.co>
+Build-Depends:
+ debhelper (>= 8.0.0),
+ g++ (>= 4:4.7),
+ gcc (>= 4:4.7),
+ qtbase5-dev (>= 5.9.0),
+ qtchooser,
+ qt5-qmake,
+ qt5-default,
+ libqt5qml5 (>= 5.9.0),
+ libqt5qml-graphicaleffects (>= 5.9.0) | qml-module-qtgraphicaleffects,
+ qtdeclarative5-controls-plugin (>= 5.9.0) | qml-module-qtquick-controls,
+ qtdeclarative5-dev (>= 5.9.0),
+ libqt5quick5 (>= 5.9.0)
+Standards-Version: 3.9.5
+Homepage: https://github.com/Aseman-Land/Falcon
+Vcs-Git: https://github.com/Aseman-Land/Falcon
+
+Package: libfalcon
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Falcon modules for Qt5
+ It's free and released under the GPLv3 license.
+
+Package: libfalcon-dev
+Section: libdevel
+Architecture: any
+Depends: libfalcon (= ${binary:Version})
+Description: Falcon Development modules for Qt5 header files.
+ It's free and released under the GPLv3 license.
+
+Package: qml-module-falcon
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Falcon components for the Qml, 
+ It's free and released under the GPLv3 license.
