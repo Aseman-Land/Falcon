@@ -26,5 +26,4 @@ void AsemanClientQml::registerTypes(const QString &uri)
     qmlRegisterType<AsemanGeneralModel>(uri.toUtf8(), 1, 0, "GeneralModel");
     qmlRegisterType<AsemanClientSocket>(uri.toUtf8(), 1, 0, "ClientSocket");
     qmlRegisterType(QUrl(QLatin1String("qrc:/Falcon/qml/RemoteImage.qml")), uri.toUtf8(), 1, 0, "RemoteImage");
-//    qmlRegisterType(QUrl(QLatin1String("qrc:/Falcon/qml/private/TrustDialog.qml")), uri.toUtf8(), 1, 0, "TrustDialog");
 }

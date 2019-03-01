@@ -1,4 +1,4 @@
-module Falcon
+module Falcon.Base
 classname AsemanClientQmlPlugin
 typeinfo plugins.qmltypes
 plugin declarative_falconqml

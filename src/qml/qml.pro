@@ -1,5 +1,5 @@
 TARGET  = falconqml
-TARGETPATH = Falcon
+TARGETPATH = Falcon/Base
 IMPORT_VERSION = 1.0
 VERSION_REVISION = 1
 
@@ -9,7 +9,6 @@ QT += core gui network falcon qml quick
 HEADERS += \
     $$PWD/asemanclientqml_plugin.h \
     $$PWD/asemanclientqml.h \
-    $$PWD/services/auth1.h \
     $$PWD/services/file1.h
 
 SOURCES += \

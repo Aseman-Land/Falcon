@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import AsemanQml.Base 2.0
-import Falcon 1.0 as Falcon
+import Falcon.Base 1.0 as Falcon
 
 Item {
     width: image.width

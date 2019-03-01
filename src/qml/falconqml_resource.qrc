@@ -2,7 +2,5 @@
     <qresource prefix="/Falcon">
         <file>qml/RemoteImage.qml</file>
         <file>qml/certificates/falcon.crt</file>
-        <file>qml/private/qmldir</file>
-        <file>qml/private/TrustDialog.qml</file>
     </qresource>
 </RCC>
