@@ -15,7 +15,7 @@ Item {
     property alias downloading: file.downloading
     property alias details: file.details
     property alias receiveMethod: file.receiveMethod
-    property alias destination: file.destination
+    property alias destination: file.destPathBase
 
     property alias fillMode: image.fillMode
     property alias asynchronous: image.asynchronous
@@ -32,21 +32,46 @@ Item {
     Image {
         id: image
         source: {
-            var path = file.finalPath
+            if(refresher < 0)
+                return ""
+
+            var path = file.destPathBase
             if(Tools.fileExists(path))
                 return path
             else
                 return ""
         }
+        property int refresher: 0
     }
 
     Falcon.RemoteFile {
         id: file
         destination: {
-            var temp = AsemanApp.tempPath
-            Tools.mkDir(temp)
-            return Devices.localFilesPrePath + temp + "/" + Tools.md5(source)
+            if(Tools.fileExists(destPathBase))
+                return destPathBase
+            else
+                return destPathDownloading
         }
         onError: console.debug(errorValue, errorCode)
+        onDownloadingChanged: {
+            if(downloading)
+                return
+
+            Tools.rename( Tools.urlToLocalPath(destPathDownloading), Tools.urlToLocalPath(destPathBase) )
+            image.refresher++
+        }
+
+        property string destPathBase: {
+            var temp = AsemanApp.tempPath
+
+            var suffix = ""
+            var suffixIdx = (source + "").lastIndexOf(".")
+            if(suffixIdx >= 0)
+                suffix = source.slice(suffixIdx)
+
+            Tools.mkDir(temp)
+            return Devices.localFilesPrePath + temp + "/" + Tools.md5(source) + suffix
+        }
+        property string destPathDownloading: destPathBase + ".download"
     }
 }

@@ -24,7 +24,8 @@ SOURCES += \
     $$PWD/asemanremotefile.cpp \
     $$PWD/asemanclientsocketcontroller.cpp \
     $$PWD/asemanclientsocket.cpp \
-    $$PWD/asemantrustsolverengine.cpp
+    $$PWD/asemantrustsolverengine.cpp \
+    $$PWD/private/asemanremotefilecore.cpp
 
 
 HEADERS +=\
@@ -39,4 +40,5 @@ HEADERS +=\
     $$PWD/asemanclientsocketcontroller.h \
     $$PWD/asemanclientmacros.h \
     $$PWD/asemanclientsocket.h \
-    $$PWD/asemantrustsolverengine.h
+    $$PWD/asemantrustsolverengine.h \
+    $$PWD/private/asemanremotefilecore.h

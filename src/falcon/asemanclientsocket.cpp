@@ -34,6 +34,7 @@
 #include <QThread>
 #include <QTcpSocket>
 #include <QFile>
+#include <QDebug>
 
 class AsemanClientSocket::RequestItem
 {

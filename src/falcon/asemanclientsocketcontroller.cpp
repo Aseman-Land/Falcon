@@ -120,7 +120,10 @@ bool AsemanClientSocketController::reconnect()
 void AsemanClientSocketController::reInit()
 {
     if(p->socket)
-        delete p->socket;
+    {
+        p->socket->deleteLater();
+        p->socket = Q_NULLPTR;
+    }
 
     if(p->parent->ssl())
     {
