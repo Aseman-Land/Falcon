@@ -203,6 +203,8 @@ void AsemanRemoteFile::stop()
 
 void AsemanRemoteFile::refresh()
 {
+    if(!p->socket || (p->destinationFileId.isEmpty() && p->destination.isEmpty()) || p->source.isEmpty())
+        return;
     if(p->currentCore)
         return;
 
