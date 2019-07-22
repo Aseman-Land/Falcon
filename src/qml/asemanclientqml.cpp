@@ -14,7 +14,7 @@ bool AsemanClientQml::registerTypes()
     if(static_types_registered)
         return true;
 
-    registerTypes("Falcon");
+    registerTypes("Falcon.Base");
     return true;
 }
 #endif
