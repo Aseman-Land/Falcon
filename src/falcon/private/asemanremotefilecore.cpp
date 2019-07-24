@@ -6,6 +6,9 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QVariantMap>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 class AsemanRemoteFileCore::Private
 {
@@ -13,10 +16,11 @@ public:
     class FilePathUnit
     {
     public:
-        FilePathUnit() : remote(false) {}
+        FilePathUnit() : remote(false), http(false) {}
         QString path;
         QString id;
         bool remote;
+        bool http;
 
         static FilePathUnit fromUrl(const QUrl &url);
     };
@@ -44,11 +48,12 @@ public:
 
     QVariantMap details;
     bool downloading;
-    qreal downloadedSize;
+    qint64 downloadedSize;
     qint64 startOffset;
     qint32 receiveMethod;
 
     QHash<qint64, BigFileUnit> bigFileUnits;
+    QHash<QNetworkReply*, QByteArray> replyBuffers;
 };
 
 AsemanRemoteFileCore::AsemanRemoteFileCore(QObject *parent) :
@@ -206,7 +211,7 @@ void AsemanRemoteFileCore::setDownloading(bool downloading)
     Q_EMIT downloadingChanged();
 }
 
-void AsemanRemoteFileCore::setDownloadedSize(qreal downloadedSize)
+void AsemanRemoteFileCore::setDownloadedSize(qint64 downloadedSize)
 {
     if(p->downloadedSize == downloadedSize)
         return;
@@ -254,14 +259,21 @@ void AsemanRemoteFileCore::refresh()
         return;
 
     if(src.remote && !dst.remote) {
-        downloadRemoteToLocal(src.path, dst.path);
+        if(src.http)
+            downloadHttpToLocal(src.path, dst.path);
+        else
+            downloadRemoteToLocal(src.path, dst.path);
     } else if(!src.remote && dst.remote) {
         if(dst.id.count())
             uploadLocalToRemoteWithId(src.path, dst.id);
         else
             uploadLocalToRemote(src.path, dst.path);
     } else if(!src.remote && !dst.remote) {
-
+        setDownloading(true);
+        QFile::copy(src.path, dst.path);
+        setFinalPath(p->destination);
+        Q_EMIT finalPathChanged();
+        setDownloading(false);
     } else {
 
     }
@@ -314,6 +326,81 @@ void AsemanRemoteFileCore::downloadRemoteToLocal(const QString &src, const QStri
             qint64 offset = (dstSize>p->startOffset? dstSize : p->startOffset);
             getFilePart(src, dst, offset, size);
         }
+    });
+}
+
+void AsemanRemoteFileCore::downloadHttpToLocal(const QString &src, const QString &dst)
+{
+    setDownloading(true);
+
+    QFile *file = new QFile(dst, this);
+
+    if(QFileInfo::exists(dst))
+    {
+        setFinalPath(p->destination);
+        Q_EMIT finalPathChanged();
+    }
+
+    QNetworkAccessManager *nm = new QNetworkAccessManager(this);
+
+    QNetworkRequest request;
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    request.setUrl( QUrl(src) );
+
+    QNetworkReply *reply = nm->get(request);
+
+    connect(reply, &QNetworkReply::metaDataChanged, this, [this, reply, dst, file](){
+        qint64 size = reply->rawHeader("Content-Length").toLongLong();
+
+        QVariantMap details;
+        details[QStringLiteral("size")] = size;
+
+        setDetails(details);
+
+        QFileInfo dstFile(dst);
+        const qint64 dstSize = dstFile.size();
+        if(dstSize == size)
+        {
+            setDownloading(false);
+            setDownloadedSize(dstSize);
+            reply->abort();
+            if(file->isOpen())
+                file->close();
+        }
+        else
+        {
+            setFinalPath(QUrl());
+            if(!file->isOpen())
+                file->open(QFile::WriteOnly);
+            if(p->replyBuffers.contains(reply))
+                file->write( p->replyBuffers.take(reply) );
+        }
+    });
+    connect(reply, &QNetworkReply::readyRead, this, [this, reply, file](){
+        QByteArray data = reply->readAll();
+        if( size() )
+        {
+            if(!file->isOpen())
+                file->open(QFile::WriteOnly);
+
+            file->write(data);
+        }
+        else
+            p->replyBuffers[reply] += data;
+
+        setDownloadedSize( p->downloadedSize + data.size() );
+    });
+    connect(reply, &QNetworkReply::finished, this, [this, reply, file, nm](){
+        if(file->isOpen())
+        {
+            file->flush();
+            file->close();
+        }
+        file->deleteLater();
+        reply->deleteLater();
+        nm->deleteLater();
+        setDownloading(false);
+        setFinalPath( QUrl(p->destination) );
     });
 }
 
@@ -518,6 +605,13 @@ AsemanRemoteFileCore::Private::FilePathUnit AsemanRemoteFileCore::Private::FileP
         if(res.path.left(9) == QStringLiteral("aseman://"))
         {
             res.path = res.path.mid(9);
+            res.http = false;
+            res.remote = true;
+        }
+        else
+        if(res.path.left(7) == QStringLiteral("http://") || res.path.left(8) == QStringLiteral("https://"))
+        {
+            res.http = true;
             res.remote = true;
         }
         else

@@ -80,12 +80,13 @@ Q_SIGNALS:
 protected:
     void refresh();
     void downloadRemoteToLocal(const QString &src, const QString &dst);
+    void downloadHttpToLocal(const QString &src, const QString &dst);
     void uploadLocalToRemoteWithId(const QString &src, const QString &dstId);
     void uploadLocalToRemote(const QString &src, const QString &dst);
 
     void setDetails(const QVariantMap &hash);
     void setDownloading(bool downloading);
-    void setDownloadedSize(qreal downloadedSize);
+    void setDownloadedSize(qint64 downloadedSize);
     void setFinalPath(const QUrl &finalPath);
 
 private:

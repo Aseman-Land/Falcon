@@ -64,10 +64,11 @@ Item {
         property string destPathBase: {
             var temp = AsemanApp.tempPath
 
+            var sourceStr = source + ""
             var suffix = ""
-            var suffixIdx = (source + "").lastIndexOf(".")
-            if(suffixIdx >= 0)
-                suffix = source.slice(suffixIdx)
+            var suffixIdx = sourceStr.lastIndexOf(".")
+            if(suffixIdx >= sourceStr.lastIndexOf("/"))
+                suffix = sourceStr.slice(suffixIdx)
 
             Tools.mkDir(temp)
             return Devices.localFilesPrePath + temp + "/" + Tools.md5(source) + suffix

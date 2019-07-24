@@ -119,7 +119,6 @@ QString AsemanRemoteFile::hash() const
     stream << p->source;
     stream << p->destination;
     stream << p->destinationFileId;
-    stream << reinterpret_cast<qint64>(p->socket.data());
     stream << p->startOffset;
     stream << p->receiveMethod;
 
