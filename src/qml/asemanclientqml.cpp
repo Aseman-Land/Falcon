@@ -6,19 +6,6 @@
 #include <asemanclientsocket.h>
 #include <qqml.h>
 
-#ifdef ASEMAN_STATIC_BUILD
-bool AsemanClientQml::static_types_registered = AsemanClientQml::registerTypes();
-
-bool AsemanClientQml::registerTypes()
-{
-    if(static_types_registered)
-        return true;
-
-    registerTypes("Falcon.Base");
-    return true;
-}
-#endif
-
 void AsemanClientQml::registerTypes(const QString &uri)
 {
     qmlRegisterType<File1>(uri.toUtf8(), 1, 0, "File");
